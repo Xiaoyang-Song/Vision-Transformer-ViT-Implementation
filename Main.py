@@ -13,12 +13,8 @@ from torchsummary import summary
 import pickle
 import math
 import os
+from Utility import *
 
-print("PyTorch Version: ",torch.__version__)
-print("Torchvision Version: ",torchvision.__version__)
-
+check_version()
+check_device()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-if torch.cuda.is_available():
-  print("Using the GPU!")
-else:
-  print("Not using the GPU")
