@@ -27,9 +27,8 @@ def process_image():
     pass
 
 
-def get_dataset(width, height):
+def get_cifar10_dataset(width, height):
     transform = transforms.Compose([Resize((width, height)), ToTensor()])
-    transform = transforms.Compose([ToTensor()])
     train_dataset = torchvision.datasets.CIFAR10(root="./data", train=True, download=True,
                                                  transform=transform)
     test_dataset = torchvision.datasets.CIFAR10(root="./data", train=False, download=True,
