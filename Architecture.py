@@ -14,6 +14,7 @@ import pickle
 import math
 import os
 
+
 class Encoder(nn.Module):
     def __init__(self):
         pass
@@ -23,6 +24,14 @@ class Encoder(nn.Module):
 
 
 class PatchEmbedding(nn.Module):
+    def __init__(self):
+        pass
+
+    def forward(self):
+        pass
+
+
+class MultiHeadAttention(nn.Module):
     def __init__(self):
         pass
 
