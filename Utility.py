@@ -1,7 +1,5 @@
 import torchvision.datasets
 from torchvision.transforms import Resize, ToTensor
-import scipy
-
 from Architecture import *
 
 

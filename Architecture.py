@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from torchvision import datasets, models, transforms
 from torchvision.datasets import CIFAR10
 import torch.nn as nn
+import scipy
 import torch.optim as optim
 from torch.autograd import Variable
 import torch.nn.functional as F
