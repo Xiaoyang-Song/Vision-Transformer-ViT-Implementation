@@ -3,3 +3,4 @@ import torch
 import torchvision
 
 print("hello vscode")
+print("asd")
