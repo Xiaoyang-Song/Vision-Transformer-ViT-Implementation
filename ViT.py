@@ -4,3 +4,4 @@ import torchvision
 
 print("hello vscode")
 print("asd")
+print("Set up Pycharm")
