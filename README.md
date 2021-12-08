@@ -1,2 +1,3 @@
 # Vision-Transformer-ViT-Implementation
-Implementation of ViT
+Implementation of Vision Transformer (ViT)
+Computational library: Pytorch
