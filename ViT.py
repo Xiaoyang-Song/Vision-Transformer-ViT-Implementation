@@ -1,7 +1,2 @@
-import numpy as np
-import torch
-import torchvision
+from Architecture import *
 
-print("hello vscode")
-print("asd")
-print("Set up Pycharm")
