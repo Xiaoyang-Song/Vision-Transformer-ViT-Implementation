@@ -37,3 +37,11 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self):
         pass
+
+
+class Residual(nn.Module):
+    def __init__(self):
+        pass
+
+    def forward(self):
+        pass
