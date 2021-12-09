@@ -58,11 +58,32 @@ class PatchEmbedding(nn.Module):
         return pos_embedded_X
 
 
+class Attention(nn.Module):
+    def __init__(self, D, D_h):
+        self.hidden_size = D
+        self.D_h = D_h
+        self.lin_Q = nn.Linear(in_features=D, out_features=D_h)
+        self.lin_K = nn.Linear(in_features=D, out_features=D_h)
+        self.lin_V = nn.Linear(in_features=D, out_features=D_h)
+
+    def forward(self, X):
+        # Q, K, V: (B, self.n_w * self.n_h + 1, D_h)
+        Q, K, V = self.lin_Q(X), self.lin_K(X), self.lin_V(X)
+        # Attention: (self.n_w * self.n_h + 1, self.n_w * self.n_h + 1)
+        A = torch.softmax(torch.bmm(Q, torch.transpose(K, 1, 2)) / torch.sqrt(self.D_h), dim=-1)
+        return torch.bmm(A, V)
+
+
+
+
+
+
 class MultiHeadAttention(nn.Module):
     def __init__(self):
         pass
 
-    def forward(self):
+    def forward(self, X):
+
         pass
 
 
