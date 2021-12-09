@@ -116,9 +116,9 @@ class MultiLayerPerceptron(nn.Module):
         return out
 
 
-class Residual(nn.Module):
-    def __init__(self):
-        pass
+class ResidualConnection(nn.Module):
+    def __init__(self, residual):
+        self.residual = residual
 
-    def forward(self):
-        pass
+    def forward(self, X):
+        return self.residual + X
