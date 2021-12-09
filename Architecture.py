@@ -61,6 +61,7 @@ class PatchEmbedding(nn.Module):
 
 class Attention(nn.Module):
     def __init__(self, D, D_h):
+        super().__init__()
         self.hidden_size = D
         self.D_h = D_h
         self.lin_Q = nn.Linear(in_features=D, out_features=D_h)
@@ -71,21 +72,32 @@ class Attention(nn.Module):
         # Q, K, V: (B, self.n_w * self.n_h + 1, D_h)
         Q, K, V = self.lin_Q(X), self.lin_K(X), self.lin_V(X)
         # Attention: (self.n_w * self.n_h + 1, self.n_w * self.n_h + 1)
-        A = torch.softmax(torch.bmm(Q, torch.transpose(K, 1, 2)) / torch.sqrt(self.D_h), dim=-1)
+        A = torch.softmax(torch.bmm(Q, torch.transpose(K, 1, 2)) / math.sqrt(self.D_h), dim=-1)
         return torch.bmm(A, V)
 
 
-
-
-
-
 class MultiHeadAttention(nn.Module):
-    def __init__(self):
-        pass
+    def __init__(self, num_heads, D):
+        super().__init__()
+        self.SA_Blocks = []
+        self.SA_Outputs = torch.empty(0)
+        self.D = D
+        self.D_h = D // num_heads
+        self.num_heads = num_heads
+        self.lin_proj = nn.Linear(in_features=self.D, out_features=self.D)
+        self.initialize()
+
+    def initialize(self):
+        for i in range(self.num_heads):
+            self.SA_Blocks.append(Attention(self.D, self.D_h))
 
     def forward(self, X):
-
-        pass
+        B, _, _ = X.shape
+        for i in range(self.num_heads):
+            self.SA_Outputs = torch.cat([self.SA_Outputs, self.SA_Blocks[i](X)], dim=-1)
+        msa_cat = self.SA_Outputs.reshape((B, -1, self.D))
+        out = self.lin_proj(msa_cat)
+        return out
 
 
 class Residual(nn.Module):
