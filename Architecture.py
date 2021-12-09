@@ -19,11 +19,22 @@ import os
 
 
 class Encoder(nn.Module):
-    def __init__(self):
-        pass
+    def __init__(self, hidden_size, num_heads, amp):
+        self.D = hidden_size
+        self.num_heads = num_heads
+        # For MLP block, hidden_layer_size = amp * hidden_size
+        self.amp = amp
+        self.msa = MultiHeadAttention(num_heads, hidden_size)
+        self.mlp = MultiLayerPerceptron(0.5, hidden_size, amp * hidden_size)
+        self.ln1 = nn.LayerNorm(hidden_size)
+        self.ln2 = nn.LayerNorm(hidden_size)
 
-    def forward(self):
-        pass
+    def forward(self, X):
+        res_1 = ResidualConnection(X)
+        out = res_1(self.msa(self.ln1(X)))
+        res_2 = ResidualConnection(out)
+        out = res_2(self.mlp(self.ln2(X)))
+        return out
 
 
 class PatchEmbedding(nn.Module):
