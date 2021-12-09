@@ -101,6 +101,21 @@ class MultiHeadAttention(nn.Module):
         return out
 
 
+class MultiLayerPerceptron(nn.Module):
+    def __init__(self, p_out, D, hidden_layer_size):
+        super().__init__()
+        self.drop = nn.Dropout(p_out)
+        self.D = D
+        self.fc1 = nn.Linear(in_features=D, out_features=hidden_layer_size)
+        self.fc2 = nn.Linear(in_features=hidden_layer_size, out_features=D)
+
+    def forward(self, X):
+        out = nn.GELU(self.fc1(X))
+        out = self.drop(out)
+        out = self.fc2(out)
+        return out
+
+
 class Residual(nn.Module):
     def __init__(self):
         pass
