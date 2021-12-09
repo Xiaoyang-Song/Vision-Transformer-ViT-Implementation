@@ -24,7 +24,7 @@ class TransformerEncoder(nn.Module):
         self.D = hidden_size
         self.num_heads = num_heads
         # For MLP block, hidden_layer_size = amp * hidden_size
-        self.amp = amp
+        self.mlp_p_out = mlp_p_out
         self.msa = MultiHeadAttention(num_heads, hidden_size)
         self.mlp = MultiLayerPerceptron(mlp_p_out, hidden_size, mlp_expansion * hidden_size)
         self.ln1 = nn.LayerNorm(hidden_size)
@@ -145,12 +145,12 @@ class MLPHead(nn.Module):
         super().__init__()
         self.num_classes = num_classes
         self.hidden_size = hidden_size
-        self.ln = nn.LayerNorm(hidden_size)
+        self.ln1 = nn.LayerNorm(hidden_size)
         self.fc1 = nn.Linear(in_features=hidden_size, out_features=num_classes)
 
     def forward(self, X):
         B, _, _ = X.shape
         # z_0: (B, D)
         z_0 = X[:, 0, :]
-        out = F.softmax(self.fc1(self.ln(z_0)), dim=-1)
+        out = torch.softmax(self.fc1(self.ln1(z_0)), dim=-1)
         return out
