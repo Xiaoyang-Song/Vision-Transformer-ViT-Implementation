@@ -33,6 +33,7 @@ class PatchEmbedding(nn.Module):
         self.patch_size = patch_size
         self.hidden_size = hidden_vec_size
         self.in_proj = in_channels * (patch_size ** 2)
+        # TODO: in ViT paper implementation, a CNN architecture is used for performance gain
         self.lin_proj = nn.Linear(in_features=self.in_proj, out_features=self.hidden_size)
         self.n_w = W // self.patch_size
         self.n_h = H // self.patch_size
