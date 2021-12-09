@@ -19,14 +19,14 @@ import os
 
 
 class TransformerEncoder(nn.Module):
-    def __init__(self, hidden_size, num_heads, amp):
+    def __init__(self, hidden_size, num_heads, mlp_expansion, mlp_p_out=0.5):
         super().__init__()
         self.D = hidden_size
         self.num_heads = num_heads
         # For MLP block, hidden_layer_size = amp * hidden_size
         self.amp = amp
         self.msa = MultiHeadAttention(num_heads, hidden_size)
-        self.mlp = MultiLayerPerceptron(0.5, hidden_size, amp * hidden_size)
+        self.mlp = MultiLayerPerceptron(mlp_p_out, hidden_size, mlp_expansion * hidden_size)
         self.ln1 = nn.LayerNorm(hidden_size)
         self.ln2 = nn.LayerNorm(hidden_size)
         # TODO: add dropout layers later for performance gain
@@ -145,11 +145,12 @@ class MLPHead(nn.Module):
         super().__init__()
         self.num_classes = num_classes
         self.hidden_size = hidden_size
+        self.ln = nn.LayerNorm(hidden_size)
         self.fc1 = nn.Linear(in_features=hidden_size, out_features=num_classes)
 
     def forward(self, X):
         B, _, _ = X.shape
         # z_0: (B, D)
         z_0 = X[:, 0, :]
-        out = F.softmax(self.fc1(z_0), dim=-1)
+        out = F.softmax(self.fc1(self.ln(z_0)), dim=-1)
         return out
