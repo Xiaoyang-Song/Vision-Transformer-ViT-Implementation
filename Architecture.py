@@ -41,6 +41,9 @@ class PatchEmbedding(nn.Module):
         self.pos_emb = nn.Parameter(torch.randn((self.n_w * self.n_h + 1, self.hidden_size)))
         self.cls = nn.Parameter(torch.randn(1, 1, self.hidden_size))
 
+    def initialize(self):
+        pass
+
     def forward(self, X):
         B, C, H, W = X.shape
         X = X.reshape((B, self.n_w * self.n_h, self.in_proj))
