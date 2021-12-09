@@ -19,7 +19,9 @@ check_version()
 check_device()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-# a = torch.ones((1,1,5))
+# a = torch.ones((4,3,5))
+# print(a.shape)
+# print(a[:,0:1,:].shape)
 # print(a.shape)
 # print(torch.repeat_interleave(a, 5, dim=0).shape)
 # a = torch.ones((2,1)).T

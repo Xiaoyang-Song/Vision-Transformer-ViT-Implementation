@@ -138,3 +138,18 @@ class ResidualConnection(nn.Module):
 
     def forward(self, X):
         return self.residual + X
+
+
+class MLPHead(nn.Module):
+    def __init__(self, num_classes, hidden_size):
+        super().__init__()
+        self.num_classes = num_classes
+        self.hidden_size = hidden_size
+        self.fc1 = nn.Linear(in_features=hidden_size, out_features=num_classes)
+
+    def forward(self, X):
+        B, _, _ = X.shape
+        # z_0: (B, D)
+        z_0 = X[:, 0, :]
+        out = F.softmax(self.fc1(z_0), dim=-1)
+        return out
