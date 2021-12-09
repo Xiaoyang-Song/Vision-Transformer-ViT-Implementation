@@ -2,6 +2,7 @@ import torch
 import torchvision.datasets
 from torchvision.transforms import Resize, ToTensor
 from Architecture import *
+from ViT import *
 
 
 def check_version():
@@ -40,7 +41,7 @@ def load_data(dataset, batch_size, shuffle):
     return train_data
 
 
-# TODO: Delete the following test codes later
+# TODO: Delete the following test functions later
 def simple_test():
     batch_size = 8
     cifar_train, cifar_test = get_cifar_10_dataset(32, 32)
@@ -55,4 +56,20 @@ def simple_test():
     encoder = TransformerEncoder(224, 8, 2)
     print(encoder(patch_embedding(single_image)).shape)
 
+
+def vit_simple_test():
+    batch_size = 8
+    cifar_train, cifar_test = get_cifar_10_dataset(32, 32)
+    loader = load_data(cifar_train, batch_size, False)
+    single_image = cifar_train.__getitem__(0)[0]
+    single_label = cifar_train.__getitem__(0)[1]
+    print(single_label)
+    image_batch = torch.repeat_interleave(torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
+    vision_transformer = ViT(hidden_size=32, H=32, W=32, num_msa_heads=4,
+                             patch_size=4, mlp_expansion=2, num_encoders=4)
+    predicted = vision_transformer(image_batch)
+    print(predicted.shape)
+
+# TODO: Delete the following function calls later
 # simple_test()
+# vit_simple_test()

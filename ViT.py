@@ -9,7 +9,8 @@ class ViT(nn.Module):
                  in_channels=3,
                  mlp_p_out=0.5,
                  num_classes=10):
-        self.D = hidden_size
+        super().__init__()
+        self.hidden_size = hidden_size
         self.H = H
         self.W = W
         self.patch_size = patch_size
@@ -25,7 +26,7 @@ class ViT(nn.Module):
         layers = [PatchEmbedding(self.hidden_size, self.H, self.W, self.patch_size, self.in_channels)]
         for i in range(self.num_encoders):
             layers.append(TransformerEncoder(self.hidden_size, self.num_msa_heads, self.mlp_expansion, self.mlp_p_out))
-        layers.append(MLPHead(self.num_classes, self.num_msa_heads))
+        layers.append(MLPHead(self.num_classes, self.hidden_size))
         return nn.Sequential(*layers)
 
     def forward(self, X):
