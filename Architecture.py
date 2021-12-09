@@ -43,6 +43,7 @@ class PatchEmbedding(nn.Module):
         self.cls = nn.Parameter(torch.randn(1, 1, self.hidden_size))
 
     def initialize(self):
+        # TODO: Create custom initialization later
         pass
 
     def forward(self, X):
