@@ -42,14 +42,16 @@ def load_data(dataset, batch_size, shuffle):
 
 
 # TODO: Delete the following test codes later
-def simple_test_patch_embedding():
+def simple_test():
     batch_size = 8
     cifar_train, cifar_test = get_cifar_10_dataset(32, 32)
     loader = load_data(cifar_train, batch_size, False)
     single_image = cifar_train.__getitem__(0)[0]
     single_image = torch.repeat_interleave(torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
-    hidden_size = 123
+    hidden_size = 224
     patch_embedding = PatchEmbedding(hidden_size, 32, 32, 4, 3)
     print(patch_embedding(single_image).shape)
+    multi_head_attention = MultiHeadAttention(8, 224)
+    print(multi_head_attention(patch_embedding(single_image)).shape)
 
 # simple_test_patch_embedding()
