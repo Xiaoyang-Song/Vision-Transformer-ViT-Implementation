@@ -18,7 +18,7 @@ import math
 import os
 
 
-class Encoder(nn.Module):
+class TransformerEncoder(nn.Module):
     def __init__(self, hidden_size, num_heads, amp):
         super().__init__()
         self.D = hidden_size
@@ -29,6 +29,7 @@ class Encoder(nn.Module):
         self.mlp = MultiLayerPerceptron(0.5, hidden_size, amp * hidden_size)
         self.ln1 = nn.LayerNorm(hidden_size)
         self.ln2 = nn.LayerNorm(hidden_size)
+        # TODO: add dropout layers later for performance gain
 
     def forward(self, X):
         res_1 = ResidualConnection(X)
@@ -100,6 +101,7 @@ class MultiHeadAttention(nn.Module):
         self.lin_proj = nn.Linear(in_features=self.D, out_features=self.D)
         self.initialize()
 
+    # TODO: vectorize this code using einops later
     def initialize(self):
         for i in range(self.num_heads):
             self.SA_Blocks.append(Attention(self.D, self.D_h))

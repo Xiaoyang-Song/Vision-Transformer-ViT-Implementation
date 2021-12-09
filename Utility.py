@@ -1,7 +1,6 @@
 import torch
 import torchvision.datasets
 from torchvision.transforms import Resize, ToTensor
-
 from Architecture import *
 
 
@@ -53,7 +52,7 @@ def simple_test():
     print(patch_embedding(single_image).shape)
     multi_head_attention = MultiHeadAttention(8, 224)
     print(multi_head_attention(patch_embedding(single_image)).shape)
-    encoder = Encoder(224, 8, 2)
+    encoder = TransformerEncoder(224, 8, 2)
     print(encoder(patch_embedding(single_image)).shape)
 
 # simple_test()
