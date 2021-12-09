@@ -20,6 +20,7 @@ import os
 
 class Encoder(nn.Module):
     def __init__(self, hidden_size, num_heads, amp):
+        super().__init__()
         self.D = hidden_size
         self.num_heads = num_heads
         # For MLP block, hidden_layer_size = amp * hidden_size
@@ -119,9 +120,10 @@ class MultiLayerPerceptron(nn.Module):
         self.D = D
         self.fc1 = nn.Linear(in_features=D, out_features=hidden_layer_size)
         self.fc2 = nn.Linear(in_features=hidden_layer_size, out_features=D)
+        self.gelu = nn.GELU()
 
     def forward(self, X):
-        out = nn.GELU(self.fc1(X))
+        out = self.gelu(self.fc1(X))
         out = self.drop(out)
         out = self.fc2(out)
         return out
@@ -129,6 +131,7 @@ class MultiLayerPerceptron(nn.Module):
 
 class ResidualConnection(nn.Module):
     def __init__(self, residual):
+        super().__init__()
         self.residual = residual
 
     def forward(self, X):
