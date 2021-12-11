@@ -41,6 +41,12 @@ def load_data(dataset, batch_size, shuffle):
     return train_data
 
 
+
+# def parse_user_input(args):
+
+
+
+
 # TODO: Delete the following test functions later
 def simple_test():
     batch_size = 8
@@ -65,6 +71,7 @@ def vit_simple_test():
     single_label = cifar_train.__getitem__(0)[1]
     print(single_label)
     image_batch = torch.repeat_interleave(torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
+    # print(image_batch.shape)
     vision_transformer = ViT(hidden_size=32, H=32, W=32, num_msa_heads=4,
                              patch_size=4, mlp_expansion=2, num_encoders=4)
     predicted = vision_transformer(image_batch)
@@ -72,4 +79,4 @@ def vit_simple_test():
 
 # TODO: Delete the following function calls later
 # simple_test()
-# vit_simple_test()
+vit_simple_test()

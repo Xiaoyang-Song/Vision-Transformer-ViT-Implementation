@@ -101,13 +101,14 @@ class MultiHeadAttention(nn.Module):
         self.lin_proj = nn.Linear(in_features=self.D, out_features=self.D)
         self.initialize()
 
-    # TODO: vectorize this code using einops later
+    # TODO: Vectorize this code using Einops (Einstein's operation) later
     def initialize(self):
         for i in range(self.num_heads):
             self.SA_Blocks.append(Attention(self.D, self.D_h))
 
     def forward(self, X):
         B, _, _ = X.shape
+        self.SA_Outputs = torch.empty(0)
         for i in range(self.num_heads):
             self.SA_Outputs = torch.cat([self.SA_Outputs, self.SA_Blocks[i](X)], dim=-1)
         msa_cat = self.SA_Outputs.reshape((B, -1, self.D))
