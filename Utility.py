@@ -1,3 +1,5 @@
+import sys
+
 import torch
 import torchvision.datasets
 from torchvision.transforms import Resize, ToTensor
@@ -41,6 +43,16 @@ def load_data(dataset, batch_size, shuffle):
     return train_data
 
 
+def make_vit_spec_dictionary(args):
+    args = np.array(args[1:]).astype(int)
+    vit_dict = {'image_W': args[0],
+                'image_H': args[1],
+                'patch_size': args[2],
+                'hidden_size': args[3],
+                'num_msa_heads': args[4],
+                'num_encoders': args[5],
+                }
+    return vit_dict
 
 # def parse_user_input(args):
 
@@ -79,4 +91,6 @@ def vit_simple_test():
 
 # TODO: Delete the following function calls later
 # simple_test()
-vit_simple_test()
+# vit_simple_test()
+dictionary = make_vit_spec_dictionary(sys.argv)
+print(dictionary)

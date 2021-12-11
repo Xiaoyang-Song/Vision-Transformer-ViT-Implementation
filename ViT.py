@@ -4,8 +4,8 @@ from Architecture import *
 class ViT(nn.Module):
     def __init__(self, hidden_size,
                  H, W, num_msa_heads,
-                 patch_size, mlp_expansion,
-                 num_encoders,
+                 patch_size, num_encoders,
+                 mlp_expansion=2,
                  in_channels=3,
                  mlp_p_out=0.5,
                  num_classes=10):
