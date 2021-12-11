@@ -123,10 +123,10 @@ class MultiLayerPerceptron(nn.Module):
         self.D = D
         self.fc1 = nn.Linear(in_features=D, out_features=hidden_layer_size)
         self.fc2 = nn.Linear(in_features=hidden_layer_size, out_features=D)
-        self.gelu = nn.GELU()
+        self.GELU = nn.GELU()
 
     def forward(self, X):
-        out = self.gelu(self.fc1(X))
+        out = self.GELU(self.fc1(X))
         out = self.drop(out)
         out = self.fc2(out)
         return out
