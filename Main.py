@@ -27,6 +27,7 @@ def main():
     height = 32
     batch_size = 1
     patch_size = 4
+
     # Get training / testing data and data loader
     train_data, test_data = get_cifar_10_dataset(width=width, height=height)
     train_dataLoader = load_data(dataset=train_data, batch_size=batch_size, shuffle=True)
@@ -37,11 +38,13 @@ def main():
                 patch_size=4, mlp_expansion=2, num_encoders=6,
                 in_channels=3, mlp_p_out=0.5, num_classes=10)
 
+    # Declare loss function & Optimizer
     learning_rate = 0.05
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
     criterion = nn.CrossEntropyLoss()
 
+    # Declare training & testing information
     num_epochs = 10
     acc_epochs = []
 
