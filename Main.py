@@ -25,7 +25,7 @@ def main():
 
     width = 32
     height = 32
-    batch_size = 32
+    batch_size = 1
     patch_size = 4
     # Get training / testing data and data loader
     train_data, test_data = get_cifar_10_dataset(width=width, height=height)
@@ -43,14 +43,15 @@ def main():
     criterion = nn.CrossEntropyLoss()
 
     num_epochs = 10
+    acc_epochs = []
 
     for epoch in range(num_epochs):
         model.train()
         print(f"Epoch: {epoch}")
         for index, (images, labels) in enumerate(train_dataLoader):
             images, labels = images.to(device), labels.to(device)
-            predicted = model(images)
-            loss = criterion(predicted, labels)
+            outputs = model(images)
+            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
@@ -67,6 +68,7 @@ def main():
                 n_samples += labels.size(0)
                 n_correct += (predicted == labels).sum().item()
             acc = 100.0 * n_correct / n_samples
+            acc_epochs.append(acc)
             print(f'-- ViT Accuracy: {acc}%')
 
 

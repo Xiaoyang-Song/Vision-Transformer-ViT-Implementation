@@ -92,5 +92,5 @@ def vit_simple_test():
 # TODO: Delete the following function calls later
 # simple_test()
 # vit_simple_test()
-dictionary = make_vit_spec_dictionary(sys.argv)
-print(dictionary)
+# dictionary = make_vit_spec_dictionary(sys.argv)
+# print(dictionary)
