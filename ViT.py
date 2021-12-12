@@ -1,4 +1,8 @@
+from torch import nn
+
 from Architecture import *
+from Architecture import PatchEmbedding
+from device import default_device
 
 
 class ViT(nn.Module):
@@ -8,8 +12,10 @@ class ViT(nn.Module):
                  mlp_expansion=2,
                  in_channels=3,
                  mlp_p_out=0.5,
-                 num_classes=10):
+                 num_classes=10,
+                 device=default_device):
         super().__init__()
+        self.to(device)
         self.hidden_size = hidden_size
         self.H = H
         self.W = W
@@ -25,8 +31,8 @@ class ViT(nn.Module):
     def make_vit(self):
         layers = [PatchEmbedding(self.hidden_size, self.H, self.W, self.patch_size, self.in_channels)]
         for i in range(self.num_encoders):
-            layers.append(TransformerEncoder(self.hidden_size, self.num_msa_heads, self.mlp_expansion, self.mlp_p_out))
-        layers.append(MLPHead(self.num_classes, self.hidden_size))
+            layers.append(TransformerEncoder(self.hidden_size, self.num_msa_heads, self.mlp_expansion, self.mlp_p_out).to(default_device))
+        layers.append(MLPHead(self.num_classes, self.hidden_size).to(default_device))
         return nn.Sequential(*layers)
 
     def forward(self, X):

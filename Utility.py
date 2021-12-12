@@ -4,7 +4,9 @@ import torch
 import torchvision.datasets
 from torchvision.transforms import Resize, ToTensor
 from Architecture import *
-from ViT import *
+from ViT import ViT
+
+from device import default_device
 
 
 def check_version():

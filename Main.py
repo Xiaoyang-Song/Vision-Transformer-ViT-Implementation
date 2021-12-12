@@ -10,22 +10,26 @@ import torch.optim as optim
 from torch.autograd import Variable
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
-from torchsummary import summary
+# from torchsummary import summary
 import pickle
 import math
 import os
 import sys
+
+from tqdm import tqdm
+
 from Utility import *
+
+from device import default_device
 
 
 def main():
     check_version()
     check_device()
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     width = 32
     height = 32
-    batch_size = 1
+    batch_size = 3000 if torch.cuda.is_available() else 1
     patch_size = 4
 
     # Get training / testing data and data loader
@@ -35,13 +39,13 @@ def main():
 
     # Declare Model
     model = ViT(hidden_size=32, H=height, W=width, num_msa_heads=4,
-                patch_size=4, mlp_expansion=2, num_encoders=6,
-                in_channels=3, mlp_p_out=0.5, num_classes=10)
+                patch_size=patch_size, mlp_expansion=2, num_encoders=6,
+                in_channels=3, mlp_p_out=0.5, num_classes=10, device=default_device)
 
     # Declare loss function & Optimizer
     learning_rate = 0.05
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-    scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
+    # scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
     criterion = nn.CrossEntropyLoss()
 
     # Declare training & testing information
@@ -51,22 +55,24 @@ def main():
     for epoch in range(num_epochs):
         model.train()
         print(f"Epoch: {epoch}")
-        for index, (images, labels) in enumerate(train_dataLoader):
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
+        print('train')
+        for index, (images, labels) in enumerate(tqdm(train_dataLoader)):
+            images, labels = images.to(default_device), labels.to(default_device)
+            outputs = model(images).to(default_device)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
-        scheduler.step()
+        # scheduler.step()
 
         model.eval()
         with torch.no_grad():
             n_correct = 0
             n_samples = 0
-            for _, (images, labels) in enumerate(test_dataLoader):
-                images, labels = images.to(device), labels.to(device)
-                outputs = model(images)
+            print('test')
+            for _, (images, labels) in enumerate(tqdm(test_dataLoader)):
+                images, labels = images.to(default_device), labels.to(default_device)
+                outputs = model(images).to(default_device)
                 _, predicted = torch.max(outputs, dim=1)
                 n_samples += labels.size(0)
                 n_correct += (predicted == labels).sum().item()

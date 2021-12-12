@@ -12,11 +12,11 @@ import torch.optim as optim
 from torch.autograd import Variable
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
-from torchsummary import summary
 import pickle
 import math
 import sys
 import os
+from device import default_device
 
 
 class TransformerEncoder(nn.Module):
@@ -26,16 +26,16 @@ class TransformerEncoder(nn.Module):
         self.num_heads = num_heads
         # For MLP block, hidden_layer_size = amp * hidden_size
         self.mlp_p_out = mlp_p_out
-        self.msa = MultiHeadAttention(num_heads, hidden_size)
-        self.mlp = MultiLayerPerceptron(mlp_p_out, hidden_size, mlp_expansion * hidden_size)
+        self.msa = MultiHeadAttention(num_heads, hidden_size).to(default_device)
+        self.mlp = MultiLayerPerceptron(mlp_p_out, hidden_size, mlp_expansion * hidden_size).to(default_device)
         self.ln1 = nn.LayerNorm(hidden_size)
         self.ln2 = nn.LayerNorm(hidden_size)
         # TODO: add dropout layers later for performance gain
 
     def forward(self, X):
-        res_1 = ResidualConnection(X)
+        res_1 = ResidualConnection(X).to(default_device)
         out = res_1(self.msa(self.ln1(X)))
-        res_2 = ResidualConnection(out)
+        res_2 = ResidualConnection(out).to(default_device)
         out = res_2(self.mlp(self.ln2(X)))
         return out
 
@@ -55,6 +55,7 @@ class PatchEmbedding(nn.Module):
         # TODO: Change the initialization of these parameters later
         self.pos_emb = nn.Parameter(torch.randn((self.n_w * self.n_h + 1, self.hidden_size)))
         self.cls = nn.Parameter(torch.randn(1, 1, self.hidden_size))
+        self.to(default_device)
 
     def initialize(self):
         # TODO: Create custom initialization later
@@ -82,6 +83,7 @@ class Attention(nn.Module):
         self.lin_Q = nn.Linear(in_features=D, out_features=D_h)
         self.lin_K = nn.Linear(in_features=D, out_features=D_h)
         self.lin_V = nn.Linear(in_features=D, out_features=D_h)
+        self.to(default_device)
 
     def forward(self, X):
         # Q, K, V: (B, self.n_w * self.n_h + 1, D_h)
@@ -95,12 +97,13 @@ class MultiHeadAttention(nn.Module):
     def __init__(self, num_heads, D):
         super().__init__()
         self.SA_Blocks = []
-        self.SA_Outputs = torch.empty(0)
+        self.SA_Outputs = torch.empty(0).to(default_device)
         self.D = D
         self.D_h = D // num_heads
         self.num_heads = num_heads
         self.lin_proj = nn.Linear(in_features=self.D, out_features=self.D)
         self.initialize()
+        self.to(default_device)
 
     # TODO: Vectorize this code using Einops (Einstein's operation) later
     def initialize(self):
@@ -109,7 +112,7 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, X):
         B, _, _ = X.shape
-        self.SA_Outputs = torch.empty(0)
+        self.SA_Outputs = torch.empty(0).to(default_device)
         for i in range(self.num_heads):
             self.SA_Outputs = torch.cat([self.SA_Outputs, self.SA_Blocks[i](X)], dim=-1)
         msa_cat = self.SA_Outputs.reshape((B, -1, self.D))
@@ -137,6 +140,7 @@ class ResidualConnection(nn.Module):
     def __init__(self, residual):
         super().__init__()
         self.residual = residual
+        self.to(default_device)
 
     def forward(self, X):
         return self.residual + X
@@ -149,6 +153,7 @@ class MLPHead(nn.Module):
         self.hidden_size = hidden_size
         self.ln1 = nn.LayerNorm(hidden_size)
         self.fc1 = nn.Linear(in_features=hidden_size, out_features=num_classes)
+        self.to(default_device)
 
     def forward(self, X):
         B, _, _ = X.shape
