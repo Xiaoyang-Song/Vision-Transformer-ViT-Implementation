@@ -29,7 +29,7 @@ def main():
 
     width = 32
     height = 32
-    batch_size = 3000 if torch.cuda.is_available() else 1
+    batch_size = 256 if torch.cuda.is_available() else 1
     patch_size = 4
 
     # Get training / testing data and data loader
@@ -38,18 +38,18 @@ def main():
     test_dataLoader = load_data(dataset=test_data, batch_size=batch_size, shuffle=False)
 
     # Declare Model
-    model = ViT(hidden_size=32, H=height, W=width, num_msa_heads=4,
+    model = ViT(hidden_size=128, H=height, W=width, num_msa_heads=4,
                 patch_size=patch_size, mlp_expansion=2, num_encoders=6,
-                in_channels=3, mlp_p_out=0.5, num_classes=10, device=default_device)
+                in_channels=3, mlp_p_out=0.1, num_classes=10, device=default_device)
 
     # Declare loss function & Optimizer
-    learning_rate = 0.05
+    learning_rate = 0.1
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     # scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
     criterion = nn.CrossEntropyLoss()
 
     # Declare training & testing information
-    num_epochs = 10
+    num_epochs = 100
     acc_epochs = []
 
     for epoch in range(num_epochs):
