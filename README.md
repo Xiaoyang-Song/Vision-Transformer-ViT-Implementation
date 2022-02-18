@@ -1,4 +1,4 @@
-# Vision-Transformer-ViT-Implementation
+# Vision-Transformer-(ViT)-Implementation
 Implementation of Vision Transformer (ViT)
 
 Computational library: Pytorch library
