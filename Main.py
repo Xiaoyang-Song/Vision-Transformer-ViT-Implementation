@@ -10,7 +10,6 @@ import torch.optim as optim
 from torch.autograd import Variable
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
-# from torchsummary import summary
 import pickle
 import math
 import os
@@ -33,7 +32,7 @@ def main():
     patch_size = 4
 
     # Get training / testing data and data loader
-    train_data, test_data = get_cifar_10_dataset(width=width, height=height)
+    train_data, test_data = get_dataset(width=width, height=height, dataset="CIFAR-10")
     train_dataLoader = load_data(dataset=train_data, batch_size=batch_size, shuffle=True)
     test_dataLoader = load_data(dataset=test_data, batch_size=batch_size, shuffle=False)
 

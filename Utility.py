@@ -31,12 +31,19 @@ def process_image():
     pass
 
 
-def get_cifar_10_dataset(width, height):
+def get_dataset(width, height, dataset):
     transform = transforms.Compose([Resize((width, height)), ToTensor()])
-    train_dataset = torchvision.datasets.CIFAR10(root="./data", train=True, download=True,
-                                                 transform=transform)
-    test_dataset = torchvision.datasets.CIFAR10(root="./data", train=False, download=True,
-                                                transform=transform)
+    if dataset == "CIFAR-10":
+        train_dataset = torchvision.datasets.CIFAR10(root="./data", train=True, download=True,
+                                                     transform=transform)
+        test_dataset = torchvision.datasets.CIFAR10(root="./data", train=False, download=True,
+                                                    transform=transform)
+    elif dataset == "ImageNet":
+        train_dataset = torchvision.datasets.ImageNet(root="./data", split="train", download=True,
+                                                      transform=transform)
+        test_dataset = torchvision.datasets.ImageNet(root="./data", train="val", download=True,
+                                                     transform=transform)
+
     return train_dataset, test_dataset
 
 
@@ -56,17 +63,21 @@ def make_vit_spec_dictionary(args):
                 }
     return vit_dict
 
-
-
 # def parse_user_input(args):
 
 
-
-
 # TODO: Delete the following test functions later
+def dataset_loader_test(width, height, dataset):
+    batch_size = 8
+    train, test = get_dataset(width, height, "ImageNet")
+    print(train.shape)
+    loader = load_data(train, batch_size, False)
+    single_image = train.__getitem__(0)[0]
+
+
 def simple_test():
     batch_size = 8
-    cifar_train, cifar_test = get_cifar_10_dataset(32, 32)
+    cifar_train, cifar_test = get_dataset(32, 32, "CIFAR-10")
     loader = load_data(cifar_train, batch_size, False)
     single_image = cifar_train.__getitem__(0)[0]
     single_image = torch.repeat_interleave(torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
@@ -81,7 +92,7 @@ def simple_test():
 
 def vit_simple_test():
     batch_size = 8
-    cifar_train, cifar_test = get_cifar_10_dataset(32, 32)
+    cifar_train, cifar_test = get_dataset(32, 32, )
     loader = load_data(cifar_train, batch_size, False)
     single_image = cifar_train.__getitem__(0)[0]
     single_label = cifar_train.__getitem__(0)[1]
@@ -93,8 +104,10 @@ def vit_simple_test():
     predicted = vision_transformer(image_batch)
     print(predicted.shape)
 
+
 # TODO: Delete the following function calls later
 # simple_test()
 # vit_simple_test()
 # dictionary = make_vit_spec_dictionary(sys.argv)
 # print(dictionary)
+# dataset_loader_test(224, 224, "ImageNet")
