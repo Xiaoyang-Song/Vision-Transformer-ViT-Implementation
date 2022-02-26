@@ -80,7 +80,8 @@ def simple_test():
     cifar_train, cifar_test = get_dataset(32, 32, "CIFAR-10")
     loader = load_data(cifar_train, batch_size, False)
     single_image = cifar_train.__getitem__(0)[0]
-    single_image = torch.repeat_interleave(torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
+    single_image = torch.repeat_interleave(
+        torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
     hidden_size = 224
     patch_embedding = PatchEmbedding(hidden_size, 32, 32, 4, 3)
     print(patch_embedding(single_image).shape)
@@ -97,7 +98,8 @@ def vit_simple_test():
     single_image = cifar_train.__getitem__(0)[0]
     single_label = cifar_train.__getitem__(0)[1]
     print(single_label)
-    image_batch = torch.repeat_interleave(torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
+    image_batch = torch.repeat_interleave(
+        torch.unsqueeze(single_image, dim=0), batch_size, dim=0)
     # print(image_batch.shape)
     vision_transformer = ViT(hidden_size=32, H=32, W=32, num_msa_heads=4,
                              patch_size=4, mlp_expansion=2, num_encoders=4)
